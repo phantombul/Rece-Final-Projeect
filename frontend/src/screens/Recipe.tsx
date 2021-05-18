@@ -17,7 +17,7 @@ import {
 import { getRecipeInstructions } from '../api';
 import { RecipeInstruction } from '../types';
 import { Stats } from '../components/Recipe/Stats';
-import { FavouriteButton } from '../components/FavouriteButton';
+import { RecipeHeaderButtons } from '../components/RecipeHeaderButtons';
 
 type Props = MainStackProps<'Recipe'>;
 
@@ -53,7 +53,7 @@ export const Recipe: React.FC<Props> = ({
       setRecipeInstructions(result),
     );
     navigation.setOptions({
-      headerRight: () => <FavouriteButton id={recipe.id} />,
+      headerRight: () => <RecipeHeaderButtons id={recipe.id} />,
     });
   }, [recipe]); //useEffect will run when recipe changes, which in this case will only run once at the beginning
 

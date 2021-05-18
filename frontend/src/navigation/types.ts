@@ -26,11 +26,13 @@ export type MainStackParams = {
   };
   Favourites: undefined;
   Cuisines: undefined;
+  SelectList: {
+    recipeId: number;
+  };
 };
 
-export type MainStackProps<
-  routeName extends keyof MainStackParams
-> = StackScreenProps<MainStackParams, routeName>;
+export type MainStackProps<routeName extends keyof MainStackParams> =
+  StackScreenProps<MainStackParams, routeName>;
 // used to send props from one page to another
 
 export type AuthStackParams = {
@@ -38,6 +40,16 @@ export type AuthStackParams = {
   SignUp: undefined;
 };
 
-export type AuthStackProps<
-  routeName extends keyof AuthStackParams
-> = StackScreenProps<AuthStackParams, routeName>;
+export type AuthStackProps<routeName extends keyof AuthStackParams> =
+  StackScreenProps<AuthStackParams, routeName>;
+
+export type ListsStackParams = {
+  CustomLists: undefined;
+  List: { name: string; recipes: string[] };
+  Recipe: {
+    recipe: Recipe;
+  };
+};
+
+export type ListsStackProps<routeName extends keyof ListsStackParams> =
+  StackScreenProps<ListsStackParams, routeName>;

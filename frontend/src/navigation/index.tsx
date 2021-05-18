@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { useUser } from '../hooks/useUser';
-import { MainStack } from './Main';
 import { AuthStack } from './Auth';
+import { MainStack } from './Main';
 
 export const Navigator = () => {
   const { user } = useUser();

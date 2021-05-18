@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import bcrypt from 'bcrypt';
 
 export async function registerController(req, res) {
     const user = await User.findOne({email: req.body.email});
@@ -6,9 +7,10 @@ export async function registerController(req, res) {
         console.log("A user account with that email address already exists");
         res.json({success: false, message: "A user account with that email address already exists"});
     } else {
+        const hashedPass = await bcrypt.hash(req.body.password,12)
         const createdUserAccount = await User.create({
             email: req.body.email,
-            password: req.body.password,
+            password: hashedPass,
             favourites: [],
             allergies: []
         });
@@ -28,7 +30,7 @@ export async function loginController(req, res) {
         success = false;
         console.log("no account for ", req.body.email)
     } else {
-        success = req.body.password === user.password;
+        success = await bcrypt.compare(req.body.password,user.password)
     }
     if (!success) {
         res.json({message: "incorrect email or password"});

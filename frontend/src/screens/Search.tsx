@@ -60,6 +60,7 @@ export const Search: React.FC<MainStackProps<'Search'>> = ({
         <RadioButton.Group
           value={searchMode}
           onValueChange={(value) => setSearchMode(value as SearchMode)}>
+          <RadioButton.Item value="fridge" label={'Fridge mode'} />
           <RadioButton.Item value="some" label={'Some of them'} />
           <RadioButton.Item value="all" label={'All of them'} />
         </RadioButton.Group>

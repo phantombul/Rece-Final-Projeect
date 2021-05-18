@@ -4,12 +4,16 @@ import { AuthCredentials, User } from '../types';
 import { login, register, updateFavourites, updateUserAllergies } from '../api';
 
 type UserContextType = {
-  user: User | undefined;
+  user: User | undefined | null;
   signIn: (credentials: AuthCredentials) => void;
   signUp: (credentials: AuthCredentials) => void;
   addFavourite: (id: number) => void;
   removeFavourite: (id: number) => void;
   updateAllergies: (allergies: string[]) => void;
+  logout: () => void;
+  addList: (name: string) => void;
+  addRecipeToList: (recipeId: number, listName: string) => void;
+  removeRecipeFromList: (recipeId: number, listName: string) => void;
 };
 
 export const UserContext = React.createContext<UserContextType>(
@@ -17,7 +21,7 @@ export const UserContext = React.createContext<UserContextType>(
 );
 
 export const UserProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | undefined>(undefined);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
     AsyncStorage.getItem('user').then((value) => {
@@ -41,6 +45,10 @@ export const UserProvider: React.FC = ({ children }) => {
 
   const signUp = useCallback<UserContextType['signUp']>((credentials) => {
     register(credentials).then(setUser);
+  }, []);
+
+  const logout = useCallback<() => void>(() => {
+    setUser(null);
   }, []);
 
   const addFavourite = (id: number) => {
@@ -67,6 +75,44 @@ export const UserProvider: React.FC = ({ children }) => {
     updateUserAllergies({ email: user.email, allergies }).then(setUser);
   };
 
+  const addList = (name: string) => {
+    if (!user) return;
+
+    setUser({
+      ...user,
+      lists: (user.lists || []).concat({ name, recipes: [] }),
+    });
+  };
+
+  const addRecipeToList = (recipeId: number, listName: string) => {
+    if (!user) return;
+
+    setUser({
+      ...user,
+      lists: user.lists.map((list) =>
+        list.name === listName
+          ? { ...list, recipes: list.recipes.concat(`${recipeId}`) }
+          : list,
+      ),
+    });
+  };
+
+  const removeRecipeFromList = (recipeId: number, listName: string) => {
+    if (!user) return;
+
+    setUser({
+      ...user,
+      lists: user.lists.map((list) =>
+        list.name === listName
+          ? {
+              ...list,
+              recipes: list.recipes.filter((id) => id !== `${recipeId}`),
+            }
+          : list,
+      ),
+    });
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -76,6 +122,10 @@ export const UserProvider: React.FC = ({ children }) => {
         addFavourite,
         removeFavourite,
         updateAllergies,
+        logout,
+        addList,
+        addRecipeToList,
+        removeRecipeFromList,
       }}>
       {typeof user !== 'undefined' && children}
     </UserContext.Provider>
